@@ -6,28 +6,28 @@
 
 // Data
 const account1 = {
-  owner: 'Jonas Schmedtmann',
+  owner: 'Vijay Sharma',
   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
   interestRate: 1.2, // %
   pin: 1111,
 };
 
 const account2 = {
-  owner: 'Jessica Davis',
+  owner: 'Deepshi Sharma',
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
   interestRate: 1.5,
   pin: 2222,
 };
 
 const account3 = {
-  owner: 'Steven Thomas Williams',
+  owner: 'Sangeeta Sharma',
   movements: [200, -200, 340, -300, -20, 50, 400, -460],
   interestRate: 0.7,
   pin: 3333,
 };
 
 const account4 = {
-  owner: 'Sarah Smith',
+  owner: 'Mamta Sharma',
   movements: [430, 1000, 700, 50, 90],
   interestRate: 1,
   pin: 4444,
@@ -95,4 +95,19 @@ const displayRecords = (movements) => {
   })
 }
 displayRecords(account1.movements)
+// Creating username from name entered in input field
+const createUsernames = function (acc) {
+  acc.forEach((account) => {
+    account.username = account.owner
+      .toLowerCase()
+      .split(' ')
+      .map(name => name[0])
+      .join('');
+  })
+}
+createUsernames(accounts)
+console.log(accounts)
+
+// forEach creates side effects while maop returns result as a part of action that is performed in callback
+
 
