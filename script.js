@@ -106,7 +106,15 @@ const createUsernames = function (acc) {
   })
 }
 createUsernames(accounts)
-console.log(accounts)
+// console.log(accounts)
+const calculatePrintBalance = function (movements) {
+  const totalBalance = movements.reduce((acc, curr) => {
+    console.log(acc)
+    return acc + curr
+  }, 0)
+  labelBalance.textContent = `${totalBalance} EUR`
+}
+calculatePrintBalance(account1.movements)
 
 // forEach creates side effects while maop returns result as a part of action that is performed in callback
 
