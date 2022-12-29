@@ -88,7 +88,7 @@ const displayRecords = (movements) => {
 <div class="movements__row">
 <div class="movements__type movements__type--${type}">${index + 1} ${type}</div>
 <div class="movements__date">3 days ago</div>
-<div class="movements__value">${movement}</div>
+<div class="movements__value">${movement}€</div>
 </div>
 `
     containerMovements.insertAdjacentHTML('afterbegin', html)
@@ -112,10 +112,39 @@ const calculatePrintBalance = function (movements) {
     console.log(acc)
     return acc + curr
   }, 0)
-  labelBalance.textContent = `${totalBalance} EUR`
+  labelBalance.textContent = `${totalBalance}€`
 }
 calculatePrintBalance(account1.movements)
+const arr = [1, 2, 3, 4, 5, 6, 7]
+arr.reduce((acc, curr, index, arr) => {
+  console.log(acc, curr, index, arr.length)
+  return acc + curr / arr.length
+}, arr[0])
+
+const calcDisplaySummary = function (movements) {
+  const income = movements.filter(mov => mov > 0).reduce((acc, mov) => acc + mov, 0);
+  labelSumIn.textContent = `${income}€`
+  const out = movements.filter(mov => mov < 0).reduce((acc, mov) => acc + mov, 0)
+  labelSumOut.textContent = `${Math.abs(out)}€`
+  // In our fictional bank, interest is paid on every deposit :)
+  const interest = movements.filter(mov => mov > 0)
+    .map(deposit => deposit * 1.2 / 100)
+    .filter((int, i, arr) => {
+      console.log(arr, 'filtered')
+      return int >= 1
+    })
+    .reduce((acc, int) => acc + int, 0)
+  labelSumInterest.textContent = `${interest}`
+}
+calcDisplaySummary(account2.movements)
+
 
 // forEach creates side effects while maop returns result as a part of action that is performed in callback
-
+// pipeline for converting euros to usd
+const eurToUsd = 1.1
+const totalDepositUSD = movements.filter(mov => mov < 0).map((mov, i, arr) => {
+  console.log(arr)
+  return eurToUsd * mov
+}).reduce((acc, mov) => acc + mov, 0);
+console.log('usd', totalDepositUSD)
 
