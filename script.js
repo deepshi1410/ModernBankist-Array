@@ -94,7 +94,7 @@ const displayRecords = (movements) => {
     containerMovements.insertAdjacentHTML('afterbegin', html)
   })
 }
-displayRecords(account1.movements)
+// displayRecords(account1.movements)
 // Creating username from name entered in input field
 const createUsernames = function (acc) {
   acc.forEach((account) => {
@@ -106,45 +106,96 @@ const createUsernames = function (acc) {
   })
 }
 createUsernames(accounts)
+const UIUpdate = function (acc) {
+  // display movements
+  displayRecords(acc.movements)
+  // display balance
+  calculatePrintBalance(acc)
+  // display summary
+  calcDisplaySummary(acc)
+}
 // console.log(accounts)
-const calculatePrintBalance = function (movements) {
-  const totalBalance = movements.reduce((acc, curr) => {
+const calculatePrintBalance = function (account) {
+  account.balance = account.movements.reduce((acc, curr) => {
     console.log(acc)
     return acc + curr
   }, 0)
-  labelBalance.textContent = `${totalBalance}€`
+  labelBalance.textContent = `${account.balance}€`
 }
-calculatePrintBalance(account1.movements)
-const arr = [1, 2, 3, 4, 5, 6, 7]
-arr.reduce((acc, curr, index, arr) => {
-  console.log(acc, curr, index, arr.length)
-  return acc + curr / arr.length
-}, arr[0])
 
-const calcDisplaySummary = function (movements) {
-  const income = movements.filter(mov => mov > 0).reduce((acc, mov) => acc + mov, 0);
+
+
+const calcDisplaySummary = function (account) {
+  const income = account.movements
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov, 0);
   labelSumIn.textContent = `${income}€`
-  const out = movements.filter(mov => mov < 0).reduce((acc, mov) => acc + mov, 0)
+  const out = account.movements
+    .filter(mov => mov < 0)
+    .reduce((acc, mov) => acc + mov, 0)
   labelSumOut.textContent = `${Math.abs(out)}€`
   // In our fictional bank, interest is paid on every deposit :)
-  const interest = movements.filter(mov => mov > 0)
-    .map(deposit => deposit * 1.2 / 100)
+  const interest = account.movements
+    .filter(mov => mov > 0)
+    .map(deposit => deposit * account.interestRate / 100)
     .filter((int, i, arr) => {
       console.log(arr, 'filtered')
       return int >= 1
     })
     .reduce((acc, int) => acc + int, 0)
-  labelSumInterest.textContent = `${interest}`
+  labelSumInterest.textContent = `${interest}€`
 }
-calcDisplaySummary(account2.movements)
+
+// Event Handlers for logging in
+let currentAccount;
+btnLogin.addEventListener('click', function (e) {
+  // prevent default behaviour of browser of refreshing page on form submission
+  e.preventDefault();
+  currentAccount = accounts.find(acc => acc.username === inputLoginUsername.value)
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    // clear input fields
+    inputLoginUsername.value = inputLoginPin.value = ''
+    inputLoginPin.blur()
+    // display ui and message
+    labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}`
+    containerApp.style.opacity = 100;
+    // update ui
+    UIUpdate(currentAccount)
+  }
+})
+
+// Transfer money
+btnTransfer.addEventListener('click', function (e) {
+  e.preventDefault()
+  const amount = Number(inputTransferAmount.value)
+  const receiverAcc = accounts.find(acc => acc.username === inputTransferTo.value)
+  inputTransferAmount.value = inputTransferTo.value = ''
+  if (amount > 0 && receiverAcc && currentAccount.balance >= amount && receiverAcc?.usename !== currentAccount.username) {
+    // doing the transfer
+    currentAccount.movements.push(-amount)
+    receiverAcc.movements.push(amount)
+
+    // update ui
+    UIUpdate(currentAccount)
+  }
+})
+
+/////////////////////////Lectures////////////
+// calculatePrintBalance(account1.movements)
+const arr = [1, 2, 3, 4, 5, 6, 7]
+arr.reduce((acc, curr, index, arr) => {
+  // console.log(acc, curr, index, arr.length)
+  return acc + curr / arr.length
+}, arr[0])
+// calcDisplaySummary(account2.movements)
 
 
 // forEach creates side effects while maop returns result as a part of action that is performed in callback
 // pipeline for converting euros to usd
 const eurToUsd = 1.1
 const totalDepositUSD = movements.filter(mov => mov < 0).map((mov, i, arr) => {
-  console.log(arr)
+  // console.log(arr)
   return eurToUsd * mov
 }).reduce((acc, mov) => acc + mov, 0);
-console.log('usd', totalDepositUSD)
+// console.log('usd', totalDepositUSD)
 
