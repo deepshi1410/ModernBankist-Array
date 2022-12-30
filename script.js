@@ -180,6 +180,23 @@ btnTransfer.addEventListener('click', function (e) {
   }
 })
 
+// close account
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault()
+  if (inputCloseUsername.value === currentAccount.username
+    && Number(inputClosePin.value) === currentAccount.pin) {
+    const position = accounts.findIndex(acc => acc.username === currentAccount.username)
+    // console.log('pos', position)
+
+    // delete account
+    accounts.splice(position, 1)
+
+    // hide UI
+    containerApp.style.opacity = 0
+  }
+  inputCloseUsername.value = inputClosePin.value = ''
+})
+
 /////////////////////////Lectures////////////
 // calculatePrintBalance(account1.movements)
 const arr = [1, 2, 3, 4, 5, 6, 7]
