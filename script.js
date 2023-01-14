@@ -79,10 +79,11 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 // arr can be simple array, set or a map.
 // display transactions in rows
 
-const displayRecords = (movements) => {
+const displayRecords = (movements, sort = false) => {
 
   containerMovements.innerHTML = ''
-  movements.forEach((movement, index) => {
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  movs.forEach((movement, index) => {
     const type = movement > 0 ? 'deposit' : 'withdrawal';
     const html = `
 <div class="movements__row">
@@ -178,6 +179,18 @@ btnTransfer.addEventListener('click', function (e) {
     // update ui
     UIUpdate(currentAccount)
   }
+  inputLoanAmount.value = ''
+})
+
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault()
+  const loanAmount = Number(inputLoanAmount.value)
+  if (loanAmount > 0 && currentAccount.movements.some(mov => mov >= 0.1 * loanAmount)) {
+    // add movement
+    currentAccount.movements.push(loanAmount)
+    // update ui
+    UIUpdate(currentAccount)
+  }
 })
 
 // close account
@@ -197,6 +210,13 @@ btnClose.addEventListener('click', function (e) {
   inputCloseUsername.value = inputClosePin.value = ''
 })
 
+// sorting the transactions
+let sorted = false
+btnSort.addEventListener('click', function (e) {
+  e.preventDefault()
+  displayRecords(currentAccount.movements, !sorted)
+  sorted = !sorted;
+})
 /////////////////////////Lectures////////////
 // calculatePrintBalance(account1.movements)
 const arr = [1, 2, 3, 4, 5, 6, 7]
@@ -216,3 +236,8 @@ const totalDepositUSD = movements.filter(mov => mov < 0).map((mov, i, arr) => {
 }).reduce((acc, mov) => acc + mov, 0);
 // console.log('usd', totalDepositUSD)
 
+// flatMap (combination of map and then applying flat on it)
+// by default flat method works one level deep only.
+// sort function
+const owners = ['Deepshi', 'Vijay', 'Sangeeta', 'Mamta', 'Vanshu']
+console.log(owners.sort((a, b) => a < b))
